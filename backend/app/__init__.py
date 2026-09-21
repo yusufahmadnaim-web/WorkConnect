@@ -6,6 +6,7 @@ from app.config import Config
 from app.extensions import db, migrate, jwt, cors
 from app.models.user import User
 from flask_restful import Api
+from app.routes.workers import WorkerProfileResource
 from app.routes.auth import (
     RegisterResource,
     LoginResource,
@@ -29,6 +30,10 @@ def create_app():
     api.add_resource(RegisterResource, "/api/auth/register")
     api.add_resource(LoginResource, "/api/auth/login")
     api.add_resource(MeResource, "/api/auth/me")
+    api.add_resource(
+    WorkerProfileResource,
+    "/api/workers/profile",
+)
 
 
 
