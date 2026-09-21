@@ -7,6 +7,7 @@ from app.extensions import db, migrate, jwt, cors
 from app.models.user import User
 from flask_restful import Api
 from app.routes.workers import WorkerProfileResource
+from app.models import User, Worker, Category, WorkerCategory
 from app.routes.auth import (
     RegisterResource,
     LoginResource,

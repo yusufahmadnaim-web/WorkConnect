@@ -47,3 +47,13 @@ class Worker(db.Model):
 
     def __repr__(self):
         return f"<Worker user_id={self.user_id}>"
+
+
+    categories = db.relationship(
+    "Category",
+    secondary="worker_categories",
+    backref=db.backref(
+        "workers",
+        lazy="dynamic",
+    ),
+)
