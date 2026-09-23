@@ -14,6 +14,11 @@ from app.routes.auth import (
     MeResource,
 )
 
+from app.routes.categories import (
+    CategoryListResource,
+    WorkerCategoriesResource,
+)
+
 
 def create_app():
     app = Flask(__name__)
@@ -34,6 +39,16 @@ def create_app():
     api.add_resource(
     WorkerProfileResource,
     "/api/workers/profile",
+)
+
+    api.add_resource(
+    CategoryListResource,
+    "/api/categories",
+)
+
+    api.add_resource(
+    WorkerCategoriesResource,
+    "/api/workers/categories",
 )
 
 
