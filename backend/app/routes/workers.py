@@ -4,6 +4,7 @@ from flask_restful import Resource
 
 from app.extensions import db
 from app.models.worker import Worker
+from app.models.category import Category
 from app.utils.auth import roles_required
 
 
@@ -86,9 +87,24 @@ class WorkerProfileResource(Resource):
 
 class WorkerListResource(Resource):
     def get(self):
-        workers = Worker.query.filter_by(
+        category_name = request.args.get("category")
+        location = request.args.get("location")
+
+        query = Worker.query.filter_by(
             verification_status="approved"
-        ).all()
+        )
+
+        if category_name:
+            query = query.join(Worker.categories).filter(
+                db.func.lower(Category.name) == category_name.strip().lower()
+            )
+
+        if location:
+            query = query.filter(
+                Worker.location.ilike(f"%{location.strip()}%")
+            )
+
+        workers = query.all()
 
         return {
             "workers": [
