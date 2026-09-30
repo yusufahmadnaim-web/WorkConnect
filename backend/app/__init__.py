@@ -19,6 +19,11 @@ from app.routes.categories import (
     WorkerCategoriesResource,
 )
 
+from app.routes.workers import (
+    WorkerProfileResource,
+    WorkerListResource,
+)
+
 
 def create_app():
     app = Flask(__name__)
@@ -49,6 +54,11 @@ def create_app():
     api.add_resource(
     WorkerCategoriesResource,
     "/api/workers/categories",
+)
+
+    api.add_resource(
+    WorkerListResource,
+    "/api/workers",
 )
 
 

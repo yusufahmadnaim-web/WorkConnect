@@ -3,7 +3,6 @@ from flask_jwt_extended import get_jwt_identity
 from flask_restful import Resource
 
 from app.extensions import db
-from app.models.user import User
 from app.models.worker import Worker
 from app.utils.auth import roles_required
 
@@ -45,9 +44,11 @@ class WorkerProfileResource(Resource):
                 "phone": worker.phone,
                 "location": worker.location,
                 "experience_years": worker.experience_years,
-                "hourly_rate": str(worker.hourly_rate)
-                if worker.hourly_rate is not None
-                else None,
+                "hourly_rate": (
+                    str(worker.hourly_rate)
+                    if worker.hourly_rate is not None
+                    else None
+                ),
                 "verification_status": worker.verification_status,
             },
         }, 201
@@ -73,9 +74,46 @@ class WorkerProfileResource(Resource):
                 "phone": worker.phone,
                 "location": worker.location,
                 "experience_years": worker.experience_years,
-                "hourly_rate": str(worker.hourly_rate)
-                if worker.hourly_rate is not None
-                else None,
+                "hourly_rate": (
+                    str(worker.hourly_rate)
+                    if worker.hourly_rate is not None
+                    else None
+                ),
                 "verification_status": worker.verification_status,
             }
+        }, 200
+
+
+class WorkerListResource(Resource):
+    def get(self):
+        workers = Worker.query.filter_by(
+            verification_status="approved"
+        ).all()
+
+        return {
+            "workers": [
+                {
+                    "id": worker.id,
+                    "user_id": worker.user_id,
+                    "full_name": worker.user.full_name,
+                    "bio": worker.bio,
+                    "phone": worker.phone,
+                    "location": worker.location,
+                    "experience_years": worker.experience_years,
+                    "hourly_rate": (
+                        str(worker.hourly_rate)
+                        if worker.hourly_rate is not None
+                        else None
+                    ),
+                    "verification_status": worker.verification_status,
+                    "categories": [
+                        {
+                            "id": category.id,
+                            "name": category.name,
+                        }
+                        for category in worker.categories
+                    ],
+                }
+                for worker in workers
+            ]
         }, 200
