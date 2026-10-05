@@ -24,6 +24,10 @@ from app.routes.workers import (
     WorkerListResource,
 )
 
+from app.routes.admin_workers import (
+    PendingWorkersResource,
+    WorkerVerificationResource,
+)
 
 def create_app():
     app = Flask(__name__)
@@ -59,6 +63,16 @@ def create_app():
     api.add_resource(
     WorkerListResource,
     "/api/workers",
+)
+
+    api.add_resource(
+    PendingWorkersResource,
+    "/api/admin/workers/pending",
+)
+
+    api.add_resource(
+    WorkerVerificationResource,
+    "/api/admin/workers/<int:worker_id>/verification",
 )
 
 
