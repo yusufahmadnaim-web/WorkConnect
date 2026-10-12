@@ -8,6 +8,7 @@ from app.models.user import User
 from app.models.booking import Booking
 from flask_restful import Api
 from app.routes.workers import WorkerProfileResource
+from app.routes.bookings import BookingListResource
 from app.models import User, Worker, Category, WorkerCategory
 from app.routes.auth import (
     RegisterResource,
@@ -24,6 +25,8 @@ from app.routes.workers import (
     WorkerProfileResource,
     WorkerListResource,
 )
+
+
 
 from app.routes.admin_workers import (
     PendingWorkersResource,
@@ -64,6 +67,12 @@ def create_app():
     api.add_resource(
     WorkerListResource,
     "/api/workers",
+)
+
+
+    api.add_resource(
+    BookingListResource,
+    "/api/bookings",
 )
 
     api.add_resource(
