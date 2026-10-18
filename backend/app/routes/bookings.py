@@ -98,3 +98,84 @@ class BookingListResource(Resource):
                 for booking in bookings
             ]
         }, 200
+
+
+class WorkerBookingListResource(Resource):
+    @roles_required("worker")
+    def get(self):
+        user_id = int(get_jwt_identity())
+
+        worker = Worker.query.filter_by(
+            user_id=user_id
+        ).first()
+
+        if not worker:
+            return {"message": "Worker profile not found"}, 404
+
+        bookings = Booking.query.filter_by(
+            worker_id=worker.id
+        ).order_by(
+            Booking.created_at.desc()
+        ).all()
+
+        return {
+            "bookings": [
+                {
+                    "id": booking.id,
+                    "customer_id": booking.customer_id,
+                    "customer_name": booking.customer.full_name,
+                    "service_description": booking.service_description,
+                    "scheduled_at": booking.scheduled_at.isoformat(),
+                    "agreed_price": (
+                        str(booking.agreed_price)
+                        if booking.agreed_price is not None
+                        else None
+                    ),
+                    "status": booking.status,
+                    "created_at": booking.created_at.isoformat(),
+                }
+                for booking in bookings
+            ]
+        }, 200
+
+
+class WorkerBookingStatusResource(Resource):
+    @roles_required("worker")
+    def patch(self, booking_id):
+        data = request.get_json() or {}
+        status = data.get("status")
+
+        if status not in {"accepted", "rejected"}:
+            return {
+                "message": "status must be accepted or rejected"
+            }, 400
+
+        user_id = int(get_jwt_identity())
+
+        worker = Worker.query.filter_by(
+            user_id=user_id
+        ).first()
+
+        if not worker:
+            return {"message": "Worker profile not found"}, 404
+
+        booking = db.session.get(Booking, booking_id)
+
+        if not booking or booking.worker_id != worker.id:
+            return {"message": "Booking not found"}, 404
+
+        if booking.status != "pending":
+            return {
+                "message": "Only pending bookings can be updated"
+            }, 400
+
+        booking.status = status
+        db.session.commit()
+
+        return {
+            "message": f"Booking {status} successfully",
+            "booking": {
+                "id": booking.id,
+                "status": booking.status,
+            },
+        }, 200
