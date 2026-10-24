@@ -179,3 +179,31 @@ class WorkerBookingStatusResource(Resource):
                 "status": booking.status,
             },
         }, 200
+
+class CustomerBookingCancelResource(Resource):
+    @roles_required("customer")
+    def delete(self, booking_id):
+        customer_id = int(get_jwt_identity())
+
+        booking = db.session.get(Booking, booking_id)
+
+        # Customers can only access their own bookings.
+        if not booking or booking.customer_id != customer_id:
+            return {"message": "Booking not found"}, 404
+
+        # Only pending bookings can be cancelled.
+        if booking.status != "pending":
+            return {
+                "message": "Only pending bookings can be cancelled"
+            }, 400
+
+        booking.status = "cancelled"
+        db.session.commit()
+
+        return {
+            "message": "Booking cancelled successfully",
+            "booking": {
+                "id": booking.id,
+                "status": booking.status,
+            },
+        }, 200

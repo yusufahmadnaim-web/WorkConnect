@@ -10,6 +10,7 @@ from flask_restful import Api
 from app.routes.workers import WorkerProfileResource
 from app.routes.bookings import (
     BookingListResource,
+    CustomerBookingCancelResource,
     WorkerBookingListResource,
     WorkerBookingStatusResource,
 )
@@ -99,6 +100,10 @@ def create_app():
     api.add_resource(
     WorkerVerificationResource,
     "/api/admin/workers/<int:worker_id>/verification",
+)
+    api.add_resource(
+    CustomerBookingCancelResource,
+    "/api/bookings/<int:booking_id>",
 )
 
 
