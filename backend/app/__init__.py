@@ -11,6 +11,8 @@ from app.routes.workers import WorkerProfileResource
 from app.routes.bookings import (
     BookingListResource,
     CustomerBookingCancelResource,
+    CustomerBookingDetailResource,
+    WorkerBookingDetailResource,
     WorkerBookingListResource,
     WorkerBookingStatusResource,
 )
@@ -104,6 +106,15 @@ def create_app():
     api.add_resource(
     CustomerBookingCancelResource,
     "/api/bookings/<int:booking_id>",
+)
+    api.add_resource(
+    CustomerBookingDetailResource,
+    "/api/bookings/<int:booking_id>",
+)
+
+    api.add_resource(
+    WorkerBookingDetailResource,
+    "/api/worker/bookings/<int:booking_id>",
 )
 
 

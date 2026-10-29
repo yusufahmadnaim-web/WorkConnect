@@ -207,3 +207,64 @@ class CustomerBookingCancelResource(Resource):
                 "status": booking.status,
             },
         }, 200
+class CustomerBookingDetailResource(Resource):
+    @roles_required("customer")
+    def get(self, booking_id):
+        customer_id = int(get_jwt_identity())
+
+        booking = db.session.get(Booking, booking_id)
+
+        if not booking or booking.customer_id != customer_id:
+            return {"message": "Booking not found"}, 404
+
+        return {
+            "booking": {
+                "id": booking.id,
+                "customer_id": booking.customer_id,
+                "worker_id": booking.worker_id,
+                "worker_name": booking.worker.user.full_name,
+                "service_description": booking.service_description,
+                "scheduled_at": booking.scheduled_at.isoformat(),
+                "agreed_price": (
+                    str(booking.agreed_price)
+                    if booking.agreed_price is not None
+                    else None
+                ),
+                "status": booking.status,
+                "created_at": booking.created_at.isoformat(),
+            }
+        }, 200
+
+
+class WorkerBookingDetailResource(Resource):
+    @roles_required("worker")
+    def get(self, booking_id):
+        user_id = int(get_jwt_identity())
+
+        worker = Worker.query.filter_by(user_id=user_id).first()
+
+        if not worker:
+            return {"message": "Worker profile not found"}, 404
+
+        booking = db.session.get(Booking, booking_id)
+
+        if not booking or booking.worker_id != worker.id:
+            return {"message": "Booking not found"}, 404
+
+        return {
+            "booking": {
+                "id": booking.id,
+                "customer_id": booking.customer_id,
+                "customer_name": booking.customer.full_name,
+                "worker_id": booking.worker_id,
+                "service_description": booking.service_description,
+                "scheduled_at": booking.scheduled_at.isoformat(),
+                "agreed_price": (
+                    str(booking.agreed_price)
+                    if booking.agreed_price is not None
+                    else None
+                ),
+                "status": booking.status,
+                "created_at": booking.created_at.isoformat(),
+            }
+        }, 200
