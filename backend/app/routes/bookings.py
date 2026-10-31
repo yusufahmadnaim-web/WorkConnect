@@ -301,3 +301,29 @@ class WorkerBookingCompleteResource(Resource):
                 "status": booking.status,
             },
         }, 200
+
+class CustomerBookingConfirmResource(Resource):
+    @roles_required("customer")
+    def patch(self, booking_id):
+        customer_id = int(get_jwt_identity())
+
+        booking = db.session.get(Booking, booking_id)
+
+        if not booking or booking.customer_id != customer_id:
+            return {"message": "Booking not found"}, 404
+
+        if booking.status != "completed":
+            return {
+                "message": "Only completed bookings can be confirmed"
+            }, 400
+
+        booking.status = "confirmed"
+        db.session.commit()
+
+        return {
+            "message": "Booking confirmed successfully",
+            "booking": {
+                "id": booking.id,
+                "status": booking.status,
+            },
+        }, 200

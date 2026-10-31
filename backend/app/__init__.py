@@ -1,4 +1,5 @@
 from flask import Flask
+from app.routes.bookings import CustomerBookingConfirmResource
 from sqlalchemy import text
 
 
@@ -14,6 +15,7 @@ from app.routes.bookings import (
     CustomerBookingDetailResource,
     WorkerBookingCompleteResource,
     WorkerBookingDetailResource,
+    CustomerBookingConfirmResource,
     WorkerBookingListResource,
     WorkerBookingStatusResource,
 )
@@ -120,6 +122,10 @@ def create_app():
     api.add_resource(
     WorkerBookingCompleteResource,
     "/api/worker/bookings/<int:booking_id>/complete",
+)
+    api.add_resource(
+    CustomerBookingConfirmResource,
+    "/api/bookings/<int:booking_id>/confirm",
 )
 
 
