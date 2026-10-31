@@ -268,3 +268,36 @@ class WorkerBookingDetailResource(Resource):
                 "created_at": booking.created_at.isoformat(),
             }
         }, 200
+
+class WorkerBookingCompleteResource(Resource):
+    @roles_required("worker")
+    def patch(self, booking_id):
+        user_id = int(get_jwt_identity())
+
+        worker = Worker.query.filter_by(
+            user_id=user_id
+        ).first()
+
+        if not worker:
+            return {"message": "Worker profile not found"}, 404
+
+        booking = db.session.get(Booking, booking_id)
+
+        if not booking or booking.worker_id != worker.id:
+            return {"message": "Booking not found"}, 404
+
+        if booking.status != "accepted":
+            return {
+                "message": "Only accepted bookings can be completed"
+            }, 400
+
+        booking.status = "completed"
+        db.session.commit()
+
+        return {
+            "message": "Booking completed successfully",
+            "booking": {
+                "id": booking.id,
+                "status": booking.status,
+            },
+        }, 200

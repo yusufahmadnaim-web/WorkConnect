@@ -12,6 +12,7 @@ from app.routes.bookings import (
     BookingListResource,
     CustomerBookingCancelResource,
     CustomerBookingDetailResource,
+    WorkerBookingCompleteResource,
     WorkerBookingDetailResource,
     WorkerBookingListResource,
     WorkerBookingStatusResource,
@@ -115,6 +116,10 @@ def create_app():
     api.add_resource(
     WorkerBookingDetailResource,
     "/api/worker/bookings/<int:booking_id>",
+)
+    api.add_resource(
+    WorkerBookingCompleteResource,
+    "/api/worker/bookings/<int:booking_id>/complete",
 )
 
 
