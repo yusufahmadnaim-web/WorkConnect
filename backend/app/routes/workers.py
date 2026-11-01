@@ -6,6 +6,7 @@ from app.extensions import db
 from app.models.worker import Worker
 from app.models.category import Category
 from app.utils.auth import roles_required
+from app.models.review import Review
 
 
 class WorkerProfileResource(Resource):
@@ -132,4 +133,48 @@ class WorkerListResource(Resource):
                 }
                 for worker in workers
             ]
+        }, 200
+
+class WorkerReviewsResource(Resource):
+    def get(self, worker_id):
+        worker = db.session.get(Worker, worker_id)
+
+        if not worker:
+            return {"message": "Worker not found"}, 404
+
+        reviews = Review.query.filter_by(
+            worker_id=worker_id
+        ).order_by(
+            Review.created_at.desc()
+        ).all()
+
+        total_reviews = len(reviews)
+
+        average_rating = (
+            round(
+                sum(review.rating for review in reviews) / total_reviews,
+                2,
+            )
+            if total_reviews > 0
+            else 0
+        )
+
+        return {
+            "worker": {
+                "id": worker.id,
+                "full_name": worker.user.full_name,
+                "average_rating": average_rating,
+                "total_reviews": total_reviews,
+            },
+            "reviews": [
+                {
+                    "id": review.id,
+                    "booking_id": review.booking_id,
+                    "customer_name": review.customer.full_name,
+                    "rating": review.rating,
+                    "comment": review.comment,
+                    "created_at": review.created_at.isoformat(),
+                }
+                for review in reviews
+            ],
         }, 200

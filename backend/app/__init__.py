@@ -1,6 +1,7 @@
 from flask import Flask
 from app.routes.bookings import CustomerBookingConfirmResource
 from sqlalchemy import text
+from app.routes.reviews import CustomerReviewResource
 
 
 from app.config import Config
@@ -8,7 +9,7 @@ from app.extensions import db, migrate, jwt, cors
 from app.models.user import User
 from app.models.booking import Booking
 from flask_restful import Api
-from app.routes.workers import WorkerProfileResource
+from app.routes.workers import WorkerProfileResource, WorkerReviewsResource
 from app.routes.bookings import (
     BookingListResource,
     CustomerBookingCancelResource,
@@ -36,6 +37,7 @@ from app.routes.categories import (
 from app.routes.workers import (
     WorkerProfileResource,
     WorkerListResource,
+    WorkerReviewsResource,
 )
 
 
@@ -90,6 +92,10 @@ def create_app():
     WorkerBookingStatusResource,
     "/api/worker/bookings/<int:booking_id>",
 )
+    api.add_resource(
+    CustomerReviewResource,
+    "/api/bookings/<int:booking_id>/reviews",
+)
 
 
     api.add_resource(
@@ -100,6 +106,10 @@ def create_app():
     api.add_resource(
     PendingWorkersResource,
     "/api/admin/workers/pending",
+)
+    api.add_resource(
+    WorkerReviewsResource,
+    "/api/workers/<int:worker_id>/reviews",
 )
 
     api.add_resource(
