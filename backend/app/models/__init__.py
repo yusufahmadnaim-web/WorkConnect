@@ -4,6 +4,7 @@ from app.models.category import Category
 from app.models.worker_category import WorkerCategory
 from app.models.booking import Booking
 from app.models.review import Review
+from app.models.worker_availability import WorkerAvailability
 
 __all__ = [
     "User",
@@ -12,4 +13,5 @@ __all__ = [
     "WorkerCategory",
     "Booking",
     "Review",
+    "WorkerAvailability",
 ]

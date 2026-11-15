@@ -2,6 +2,8 @@ from flask import Flask
 from app.routes.bookings import CustomerBookingConfirmResource
 from sqlalchemy import text
 from app.routes.reviews import CustomerReviewResource
+from app.routes.availability import WorkerAvailabilityResource
+
 
 
 from app.config import Config
@@ -71,6 +73,11 @@ def create_app():
     api.add_resource(
     CategoryListResource,
     "/api/categories",
+)
+    api.add_resource(
+    WorkerAvailabilityResource,
+    "/api/worker/availability",
+    "/api/worker/availability/<int:availability_id>",
 )
 
     api.add_resource(
